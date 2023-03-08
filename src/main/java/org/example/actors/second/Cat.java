@@ -20,13 +20,16 @@ public class Cat extends AbstractBehavior<CatCommand> {
     public Receive<CatCommand> createReceive() {
         return newReceiveBuilder()
                 .onMessage(EatMouseCommand.class, this::thanksMethod)
-                .onMessage(CatHealth.class, this::responseCatHealth)
+                .onMessage(CatPostCommand.class, this::request)
                 .build();
     }
 
-    private Behavior<CatCommand> responseCatHealth() {
+    private Behavior<CatCommand> request(CatPostCommand catPostCommand) {
+        System.out.println("POST METHOD IN CAT");
+        catPostCommand.getReplyTo().tell(new HttpResponseCommand(catPostCommand.getBody()));
         return Behaviors.same();
     }
+
 
     private Behavior<CatCommand> thanksMethod(EatMouseCommand eatMouseCommand) {
         System.out.println("We catch message from CatHouse");
